@@ -1,14 +1,28 @@
 import os
-from os import getenv
 
-API_ID = int(os.environ.get("API_ID", ""))  # Replace "123456" with your actual api_id or use .env
+def get_int_env(name, default=None):
+    val = os.environ.get(name, "")
+    if val is None or val == "":
+        return default
+    try:
+        return int(val)
+    except (ValueError, TypeError):
+        return default
+
+API_ID = get_int_env("API_ID", None)
 API_HASH = os.environ.get("API_HASH", "")
 BOT_TOKEN = os.environ.get("BOT_TOKEN", "")
 
-OWNER_ID = int(os.environ.get("OWNER_ID", ""))  # Your Telegram user ID
-SUDO_USERS = list(map(int, os.environ.get("SUDO_USERS", "").split()))  # Space-separated user IDs
+OWNER_ID = get_int_env("OWNER_ID", None)
 
-MONGO_URL = os.environ.get("MONGO_URL", "")##your mongo url eg: withmongodb+srv://xxxxxxx:xxxxxxx@clusterX.xxxx.mongodb.net/?retryWrites=true&w=majority
-CHANNEL_ID = int(os.environ.get("CHANNEL_ID", "-"))  # Telegram channel ID (with -100 prefix)
+SUDO_USERS = []
+_sudo = os.environ.get("SUDO_USERS", "").strip()
+if _sudo:
+    try:
+        SUDO_USERS = list(map(int, _sudo.split()))
+    except ValueError:
+        SUDO_USERS = []
 
-PREMIUM_LOGS = os.environ.get("PREMIUM_LOGS", "")  # Optional here you'll get all logs
+MONGO_URL = os.environ.get("MONGO_URL", "")
+CHANNEL_ID = get_int_env("CHANNEL_ID", None)
+PREMIUM_LOGS = os.environ.get("PREMIUM_LOGS", "")
